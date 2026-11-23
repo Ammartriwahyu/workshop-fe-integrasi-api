@@ -1638,3 +1638,6 @@ function ProductDetailContent() {
 - Next.js — Image Component: https://nextjs.org/docs/app/api-reference/components/image
 - Next.js — useParams: https://nextjs.org/docs/app/api-reference/functions/use-params
 - Dokumentasi DummyJSON (Products): https://dummyjson.com/docs/products
+
+
+link artifact : https://claude.ai/artifact/414UyhVs5pyhyxS9tXRX5R#home
