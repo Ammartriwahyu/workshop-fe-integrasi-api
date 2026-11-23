@@ -168,7 +168,7 @@ Satu hal penting: DummyJSON **hanya mensimulasikan** perubahan data. Saat kamu m
 
 ```bash
 # 1. Unduh (clone) repo ini ke laptop kamu
-git clone https://github.com/USERNAME-GITHUB/workshop-fe-integrasi-api.git
+git clone https://github.com/Ammartriwahyu/workshop-fe-integrasi-api.git
 
 # 2. Masuk ke folder project
 cd workshop-fe-integrasi-api
