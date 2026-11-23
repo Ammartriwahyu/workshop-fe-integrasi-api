@@ -568,38 +568,58 @@ export default function Home() {
   }, []); // [] = jalankan sekali saja saat halaman pertama kali tampil
 
   return (
-    <main className="mx-auto max-w-4xl p-6">
-      <div className="mb-6 flex items-center justify-between">
-        <h1 className="text-2xl font-bold">Katalog Produk</h1>
-        <Link href="/products/new" className="rounded border px-3 py-2 text-sm">
-          + Tambah Produk
-        </Link>
-      </div>
-
-      {isLoading && <p>Loading...</p>}
-
-      {error && <p className="text-red-600">Error: {error}</p>}
-
-      {!isLoading && !error && (
-        <div className="grid grid-cols-2 gap-4 md:grid-cols-5">
-          {products.map((product) => (
-            <Link
-              key={product.id}
-              href={`/products/${product.id}`}
-              className="rounded border p-3"
-            >
-              <Image
-                src={product.thumbnail}
-                alt={product.title}
-                width={150}
-                height={150}
-              />
-              <h2 className="mt-2 text-sm font-semibold">{product.title}</h2>
-              <p className="text-sm text-gray-600">${product.price}</p>
-            </Link>
-          ))}
+    <main className="min-h-screen bg-gray-50">
+      <div className="mx-auto max-w-5xl px-4 py-8">
+        <div className="mb-8 flex flex-wrap items-center justify-between gap-4">
+          <div>
+            <h1 className="text-3xl font-bold text-gray-900">Katalog Produk</h1>
+            <p className="mt-1 text-sm text-gray-500">Data dari DummyJSON</p>
+          </div>
+          <Link
+            href="/products/new"
+            className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700"
+          >
+            + Tambah Produk
+          </Link>
         </div>
-      )}
+
+        {isLoading && (
+          <p className="rounded-lg border border-gray-200 bg-white p-6 text-center text-gray-500">
+            Loading...
+          </p>
+        )}
+
+        {error && (
+          <p className="rounded-lg border border-red-200 bg-red-50 p-4 text-red-700">
+            Error: {error}
+          </p>
+        )}
+
+        {!isLoading && !error && (
+          <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-5">
+            {products.map((product) => (
+              <Link
+                key={product.id}
+                href={`/products/${product.id}`}
+                className="rounded-xl border border-gray-200 bg-white p-3 shadow-sm hover:border-blue-400"
+              >
+                <div className="flex justify-center rounded-lg bg-gray-100 p-2">
+                  <Image
+                    src={product.thumbnail}
+                    alt={product.title}
+                    width={150}
+                    height={150}
+                  />
+                </div>
+                <h2 className="mt-3 text-sm font-semibold text-gray-900">
+                  {product.title}
+                </h2>
+                <p className="mt-1 font-bold text-blue-600">${product.price}</p>
+              </Link>
+            ))}
+          </div>
+        )}
+      </div>
     </main>
   );
 }
@@ -618,6 +638,7 @@ export default function Home() {
   - `catch` → kalau ada `throw new Error` dari `api.ts`, pesannya disimpan ke state `error`.
   - `finally` → selalu jalan di akhir, sukses atau gagal, untuk mematikan loading.
 - **Tampilan bersyarat**: `{isLoading && <p>Loading...</p>}` artinya "tampilkan Loading kalau `isLoading` bernilai `true`".
+- **Tampilan** hanya memakai class Tailwind dasar: `min-h-screen bg-gray-50` untuk latar abu-abu muda, `mx-auto max-w-5xl px-4 py-8` supaya isi berada di tengah, dan `rounded-xl border bg-white shadow-sm` untuk kartu. `grid-cols-2 sm:grid-cols-3 lg:grid-cols-5` membuat grid 2 kolom di HP, 3 kolom di tablet, dan 5 kolom di layar lebar. `hover:` hanya mengubah warna saat kursor di atas elemen.
 - **`.map()`** mengubah setiap produk menjadi satu kartu. **`key={product.id}`** wajib ada supaya React bisa membedakan tiap kartu.
 - **`<Link href=...>`** dari Next.js untuk pindah halaman tanpa reload penuh. Setiap kartu menuju `/products/1`, `/products/2`, dst.
 - **`<Image>`** dari `next/image` wajib diberi `width` dan `height` supaya ruangnya sudah disiapkan sebelum gambar selesai dimuat, jadi layout tidak "loncat".
@@ -666,7 +687,7 @@ import type { ProductDetail } from "@/types/product";
 // karena nilai id baru diketahui saat halaman dibuka. Tanpa ini, npm run build gagal.
 export default function ProductDetailPage() {
   return (
-    <Suspense fallback={<p className="p-6">Loading...</p>}>
+    <Suspense fallback={<p className="p-6 text-gray-500">Loading...</p>}>
       <ProductDetailContent />
     </Suspense>
   );
@@ -696,47 +717,82 @@ function ProductDetailContent() {
   }, [id]); // jalankan ulang kalau id di URL berubah
 
   return (
-    <main className="mx-auto max-w-2xl p-6">
-      <Link href="/" className="text-sm text-blue-600 underline">
-        ← Kembali ke daftar
-      </Link>
+    <main className="min-h-screen bg-gray-50">
+      <div className="mx-auto max-w-3xl px-4 py-8">
+        <Link
+          href="/"
+          className="text-sm font-medium text-blue-600 hover:underline"
+        >
+          ← Kembali ke daftar
+        </Link>
 
-      {isLoading && <p className="mt-4">Loading...</p>}
+        {isLoading && (
+          <p className="mt-6 rounded-lg border border-gray-200 bg-white p-6 text-center text-gray-500">
+            Loading...
+          </p>
+        )}
 
-      {error && <p className="mt-4 text-red-600">{error}</p>}
+        {error && (
+          <p className="mt-6 rounded-lg border border-red-200 bg-red-50 p-4 text-red-700">
+            {error}
+          </p>
+        )}
 
-      {product && (
-        <div className="mt-4">
-          <Image
-            src={product.thumbnail}
-            alt={product.title}
-            width={300}
-            height={300}
-            className="rounded border"
-          />
-          <h1 className="mt-4 text-2xl font-bold">{product.title}</h1>
-          <p className="text-sm text-gray-500">Kategori: {product.category}</p>
-          <p className="mt-2 text-xl">${product.price}</p>
-          <p className="text-sm">Rating: {product.rating} / 5</p>
-          <p className="mt-4">{product.description}</p>
+        {product && (
+          <div className="mt-6 rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
+            <div className="grid gap-6 md:grid-cols-2">
+              <div className="flex justify-center rounded-lg bg-gray-100 p-4">
+                <Image
+                  src={product.thumbnail}
+                  alt={product.title}
+                  width={300}
+                  height={300}
+                />
+              </div>
 
-          <h2 className="mt-6 text-lg font-semibold">
-            Ulasan ({product.reviews.length})
-          </h2>
-          <ul className="mt-2 space-y-3">
-            {/* Ulasan tidak punya id, jadi index dipakai sebagai key.
-                Aman karena daftar ulasan ini tidak diubah urutannya. */}
-            {product.reviews.map((review, index) => (
-              <li key={index} className="rounded border p-3">
-                <p className="font-semibold">
-                  {review.reviewerName} — {review.rating}/5
+              <div>
+                <p className="inline-block rounded-full bg-blue-50 px-3 py-1 text-xs font-semibold text-blue-700">
+                  Kategori: {product.category}
                 </p>
-                <p className="text-gray-700">{review.comment}</p>
-              </li>
-            ))}
-          </ul>
-        </div>
-      )}
+                <h1 className="mt-3 text-2xl font-bold text-gray-900">
+                  {product.title}
+                </h1>
+                <p className="mt-2 text-3xl font-bold text-blue-600">
+                  ${product.price}
+                </p>
+                <p className="mt-1 text-sm text-gray-600">
+                  Rating: {product.rating} / 5
+                </p>
+                <p className="mt-4 text-gray-700">{product.description}</p>
+              </div>
+            </div>
+
+            <h2 className="mt-8 border-t border-gray-200 pt-6 text-lg font-semibold text-gray-900">
+              Ulasan ({product.reviews.length})
+            </h2>
+            <ul className="mt-4 space-y-3">
+              {/* Ulasan tidak punya id, jadi index dipakai sebagai key.
+                  Aman karena daftar ulasan ini tidak diubah urutannya. */}
+              {product.reviews.map((review, index) => (
+                <li
+                  key={index}
+                  className="rounded-lg border border-gray-200 bg-gray-50 p-4"
+                >
+                  <div className="flex items-center justify-between gap-2">
+                    <p className="font-semibold text-gray-900">
+                      {review.reviewerName}
+                    </p>
+                    <span className="rounded-full bg-yellow-100 px-2 py-1 text-xs font-semibold text-yellow-800">
+                      {review.rating}/5
+                    </span>
+                  </div>
+                  <p className="mt-1 text-gray-700">{review.comment}</p>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+      </div>
     </main>
   );
 }
@@ -834,68 +890,88 @@ export default function NewProductPage() {
   }
 
   return (
-    <main className="mx-auto max-w-md p-6">
-      <Link href="/" className="text-sm text-blue-600 underline">
-        ← Kembali ke daftar
-      </Link>
-
-      <h1 className="mt-4 text-2xl font-bold">Tambah Produk</h1>
-
-      <form onSubmit={handleSubmit} className="mt-4 space-y-4">
-        <div>
-          <label htmlFor="title" className="block text-sm font-medium">
-            Nama produk
-          </label>
-          <input
-            id="title"
-            type="text"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            placeholder="Contoh: Kopi Susu"
-            className="mt-1 w-full rounded border p-2"
-          />
-        </div>
-
-        <div>
-          <label htmlFor="price" className="block text-sm font-medium">
-            Harga ($)
-          </label>
-          <input
-            id="price"
-            type="number"
-            step="0.01"
-            value={price}
-            onChange={(e) => setPrice(e.target.value)}
-            placeholder="Contoh: 4.99"
-            className="mt-1 w-full rounded border p-2"
-          />
-        </div>
-
-        <button
-          type="submit"
-          disabled={isSubmitting}
-          className="rounded bg-blue-600 px-4 py-2 text-white disabled:opacity-50"
+    <main className="min-h-screen bg-gray-50">
+      <div className="mx-auto max-w-lg px-4 py-8">
+        <Link
+          href="/"
+          className="text-sm font-medium text-blue-600 hover:underline"
         >
-          {isSubmitting ? "Mengirim..." : "Simpan"}
-        </button>
-      </form>
+          ← Kembali ke daftar
+        </Link>
 
-      {error && <p className="mt-4 text-red-600">{error}</p>}
+        <div className="mt-6 rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
+          <h1 className="text-2xl font-bold text-gray-900">Tambah Produk</h1>
+          <p className="mt-1 text-sm text-gray-500">
+            Isi nama dan harga, lalu klik Simpan.
+          </p>
 
-      {result && (
-        <div className="mt-4 rounded border p-3">
-          <p className="font-semibold">
-            Berhasil! Server memberi id baru: {result.id}
-          </p>
-          <pre className="mt-2 rounded bg-gray-100 p-2 text-sm">
-            {JSON.stringify(result, null, 2)}
-          </pre>
-          <p className="mt-2 text-sm text-gray-600">
-            Catatan: DummyJSON hanya pura-pura menyimpan, jadi produk ini tidak
-            akan muncul di halaman daftar. Itu normal.
-          </p>
+          <form onSubmit={handleSubmit} className="mt-6 space-y-4">
+            <div>
+              <label
+                htmlFor="title"
+                className="mb-1 block text-sm font-medium text-gray-700"
+              >
+                Nama produk
+              </label>
+              <input
+                id="title"
+                type="text"
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                placeholder="Contoh: Kopi Susu"
+                className="w-full rounded-lg border border-gray-300 px-3 py-2 focus:border-blue-500 focus:outline-none"
+              />
+            </div>
+
+            <div>
+              <label
+                htmlFor="price"
+                className="mb-1 block text-sm font-medium text-gray-700"
+              >
+                Harga ($)
+              </label>
+              <input
+                id="price"
+                type="number"
+                step="0.01"
+                value={price}
+                onChange={(e) => setPrice(e.target.value)}
+                placeholder="Contoh: 4.99"
+                className="w-full rounded-lg border border-gray-300 px-3 py-2 focus:border-blue-500 focus:outline-none"
+              />
+            </div>
+
+            <button
+              type="submit"
+              disabled={isSubmitting}
+              className="w-full rounded-lg bg-blue-600 px-4 py-2 font-semibold text-white hover:bg-blue-700 disabled:opacity-50"
+            >
+              {isSubmitting ? "Mengirim..." : "Simpan"}
+            </button>
+          </form>
+
+          {error && (
+            <p className="mt-4 rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-700">
+              {error}
+            </p>
+          )}
+
+          {result && (
+            <div className="mt-4 rounded-lg border border-green-200 bg-green-50 p-4">
+              <p className="font-semibold text-green-800">
+                Berhasil! Server memberi id baru: {result.id}
+              </p>
+              <pre className="mt-2 overflow-x-auto rounded-lg bg-white p-3 text-sm">
+                {JSON.stringify(result, null, 2)}
+              </pre>
+              <p className="mt-2 text-sm text-gray-600">
+                Catatan: DummyJSON hanya pura-pura menyimpan, jadi produk ini
+                tidak akan muncul di halaman daftar. Itu normal.
+              </p>
+            </div>
+          )}
         </div>
-      )}
+      </div>
     </main>
   );
 }
@@ -1108,55 +1184,80 @@ export default function Home() {
   }
 
   return (
-    <main className="mx-auto max-w-4xl p-6">
-      <div className="mb-6 flex items-center justify-between">
-        <h1 className="text-2xl font-bold">Katalog Produk</h1>
-        <Link href="/products/new" className="rounded border px-3 py-2 text-sm">
-          + Tambah Produk
-        </Link>
-      </div>
-
-      <form onSubmit={handleSearch} className="mb-6 flex gap-2">
-        <input
-          type="text"
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          placeholder="Cari produk, contoh: phone"
-          className="w-full rounded border p-2"
-        />
-        <button type="submit" className="rounded border px-4 py-2">
-          Cari
-        </button>
-      </form>
-
-      {isLoading && <p>Loading...</p>}
-
-      {error && <p className="text-red-600">Error: {error}</p>}
-
-      {!isLoading && !error && products.length === 0 && (
-        <p>Produk tidak ditemukan.</p>
-      )}
-
-      {!isLoading && !error && (
-        <div className="grid grid-cols-2 gap-4 md:grid-cols-5">
-          {products.map((product) => (
-            <Link
-              key={product.id}
-              href={`/products/${product.id}`}
-              className="rounded border p-3"
-            >
-              <Image
-                src={product.thumbnail}
-                alt={product.title}
-                width={150}
-                height={150}
-              />
-              <h2 className="mt-2 text-sm font-semibold">{product.title}</h2>
-              <p className="text-sm text-gray-600">${product.price}</p>
-            </Link>
-          ))}
+    <main className="min-h-screen bg-gray-50">
+      <div className="mx-auto max-w-5xl px-4 py-8">
+        <div className="mb-8 flex flex-wrap items-center justify-between gap-4">
+          <div>
+            <h1 className="text-3xl font-bold text-gray-900">Katalog Produk</h1>
+            <p className="mt-1 text-sm text-gray-500">Data dari DummyJSON</p>
+          </div>
+          <Link
+            href="/products/new"
+            className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700"
+          >
+            + Tambah Produk
+          </Link>
         </div>
-      )}
+
+        <form onSubmit={handleSearch} className="mb-6 flex gap-2">
+          <input
+            type="text"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            placeholder="Cari produk, contoh: phone"
+            className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 focus:border-blue-500 focus:outline-none"
+          />
+          <button
+            type="submit"
+            className="rounded-lg border border-gray-300 bg-white px-4 py-2 font-medium text-gray-700 hover:bg-gray-100"
+          >
+            Cari
+          </button>
+        </form>
+
+        {isLoading && (
+          <p className="rounded-lg border border-gray-200 bg-white p-6 text-center text-gray-500">
+            Loading...
+          </p>
+        )}
+
+        {error && (
+          <p className="rounded-lg border border-red-200 bg-red-50 p-4 text-red-700">
+            Error: {error}
+          </p>
+        )}
+
+        {!isLoading && !error && products.length === 0 && (
+          <p className="rounded-lg border border-gray-200 bg-white p-6 text-center text-gray-500">
+            Produk tidak ditemukan.
+          </p>
+        )}
+
+        {!isLoading && !error && (
+          <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-5">
+            {products.map((product) => (
+              <Link
+                key={product.id}
+                href={`/products/${product.id}`}
+                className="rounded-xl border border-gray-200 bg-white p-3 shadow-sm hover:border-blue-400"
+              >
+                <div className="flex justify-center rounded-lg bg-gray-100 p-2">
+                  <Image
+                    src={product.thumbnail}
+                    alt={product.title}
+                    width={150}
+                    height={150}
+                  />
+                </div>
+                <h2 className="mt-3 text-sm font-semibold text-gray-900">
+                  {product.title}
+                </h2>
+                <p className="mt-1 font-bold text-blue-600">${product.price}</p>
+              </Link>
+            ))}
+          </div>
+        )}
+      </div>
     </main>
   );
 }
@@ -1333,7 +1434,7 @@ import type { ProductDetail } from "@/types/product";
 // karena nilai id baru diketahui saat halaman dibuka. Tanpa ini, npm run build gagal.
 export default function ProductDetailPage() {
   return (
-    <Suspense fallback={<p className="p-6">Loading...</p>}>
+    <Suspense fallback={<p className="p-6 text-gray-500">Loading...</p>}>
       <ProductDetailContent />
     </Suspense>
   );
@@ -1384,57 +1485,96 @@ function ProductDetailContent() {
   }
 
   return (
-    <main className="mx-auto max-w-2xl p-6">
-      <Link href="/" className="text-sm text-blue-600 underline">
-        ← Kembali ke daftar
-      </Link>
+    <main className="min-h-screen bg-gray-50">
+      <div className="mx-auto max-w-3xl px-4 py-8">
+        <Link
+          href="/"
+          className="text-sm font-medium text-blue-600 hover:underline"
+        >
+          ← Kembali ke daftar
+        </Link>
 
-      {isLoading && <p className="mt-4">Loading...</p>}
+        {isLoading && (
+          <p className="mt-6 rounded-lg border border-gray-200 bg-white p-6 text-center text-gray-500">
+            Loading...
+          </p>
+        )}
 
-      {error && <p className="mt-4 text-red-600">{error}</p>}
+        {error && (
+          <p className="mt-6 rounded-lg border border-red-200 bg-red-50 p-4 text-red-700">
+            {error}
+          </p>
+        )}
 
-      {product && (
-        <div className="mt-4">
-          <Image
-            src={product.thumbnail}
-            alt={product.title}
-            width={300}
-            height={300}
-            className="rounded border"
-          />
-          <h1 className="mt-4 text-2xl font-bold">{product.title}</h1>
-          <p className="text-sm text-gray-500">Kategori: {product.category}</p>
-          <p className="mt-2 text-xl">${product.price}</p>
-          <p className="text-sm">Rating: {product.rating} / 5</p>
-          <p className="mt-4">{product.description}</p>
+        {product && (
+          <div className="mt-6 rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
+            <div className="grid gap-6 md:grid-cols-2">
+              <div className="flex justify-center rounded-lg bg-gray-100 p-4">
+                <Image
+                  src={product.thumbnail}
+                  alt={product.title}
+                  width={300}
+                  height={300}
+                />
+              </div>
 
-          <button
-            onClick={handleDelete}
-            disabled={isDeleting}
-            className="mt-4 rounded bg-red-600 px-4 py-2 text-white disabled:opacity-50"
-          >
-            {isDeleting ? "Menghapus..." : "Hapus Produk"}
-          </button>
-
-          {deleteMessage && <p className="mt-2 text-sm">{deleteMessage}</p>}
-
-          <h2 className="mt-6 text-lg font-semibold">
-            Ulasan ({product.reviews.length})
-          </h2>
-          <ul className="mt-2 space-y-3">
-            {/* Ulasan tidak punya id, jadi index dipakai sebagai key.
-                Aman karena daftar ulasan ini tidak diubah urutannya. */}
-            {product.reviews.map((review, index) => (
-              <li key={index} className="rounded border p-3">
-                <p className="font-semibold">
-                  {review.reviewerName} — {review.rating}/5
+              <div>
+                <p className="inline-block rounded-full bg-blue-50 px-3 py-1 text-xs font-semibold text-blue-700">
+                  Kategori: {product.category}
                 </p>
-                <p className="text-gray-700">{review.comment}</p>
-              </li>
-            ))}
-          </ul>
-        </div>
-      )}
+                <h1 className="mt-3 text-2xl font-bold text-gray-900">
+                  {product.title}
+                </h1>
+                <p className="mt-2 text-3xl font-bold text-blue-600">
+                  ${product.price}
+                </p>
+                <p className="mt-1 text-sm text-gray-600">
+                  Rating: {product.rating} / 5
+                </p>
+                <p className="mt-4 text-gray-700">{product.description}</p>
+
+                <button
+                  onClick={handleDelete}
+                  disabled={isDeleting}
+                  className="mt-6 rounded-lg bg-red-600 px-4 py-2 text-sm font-semibold text-white hover:bg-red-700 disabled:opacity-50"
+                >
+                  {isDeleting ? "Menghapus..." : "Hapus Produk"}
+                </button>
+
+                {deleteMessage && (
+                  <p className="mt-3 rounded-lg border border-gray-200 bg-gray-50 p-3 text-sm text-gray-700">
+                    {deleteMessage}
+                  </p>
+                )}
+              </div>
+            </div>
+
+            <h2 className="mt-8 border-t border-gray-200 pt-6 text-lg font-semibold text-gray-900">
+              Ulasan ({product.reviews.length})
+            </h2>
+            <ul className="mt-4 space-y-3">
+              {/* Ulasan tidak punya id, jadi index dipakai sebagai key.
+                  Aman karena daftar ulasan ini tidak diubah urutannya. */}
+              {product.reviews.map((review, index) => (
+                <li
+                  key={index}
+                  className="rounded-lg border border-gray-200 bg-gray-50 p-4"
+                >
+                  <div className="flex items-center justify-between gap-2">
+                    <p className="font-semibold text-gray-900">
+                      {review.reviewerName}
+                    </p>
+                    <span className="rounded-full bg-yellow-100 px-2 py-1 text-xs font-semibold text-yellow-800">
+                      {review.rating}/5
+                    </span>
+                  </div>
+                  <p className="mt-1 text-gray-700">{review.comment}</p>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+      </div>
     </main>
   );
 }
